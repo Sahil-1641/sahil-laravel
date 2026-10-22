@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,6 +13,7 @@ class ProjectCrudTest extends TestCase
 
     public function test_projects_page_lists_projects_and_links_to_create(): void
     {
+        $this->actingAs(User::factory()->create());
         $project = Project::create([
             'name' => 'Community Garden',
             'location' => 'North campus',
@@ -28,11 +30,12 @@ class ProjectCrudTest extends TestCase
 
     public function test_project_can_be_created(): void
     {
-        $this->post(route('projects.store'), [
-            'name' => 'Peer Tutoring',
-            'location' => 'Library',
-            'description' => 'Weekly study sessions.',
-        ])
+        $this->actingAs(User::factory()->create())
+            ->post(route('projects.store'), [
+                'name' => 'Peer Tutoring',
+                'location' => 'Library',
+                'description' => 'Weekly study sessions.',
+            ])
             ->assertRedirect(route('projects.show', 1))
             ->assertSessionHas('success', 'Project created successfully.');
 
@@ -45,7 +48,8 @@ class ProjectCrudTest extends TestCase
 
     public function test_project_creation_requires_all_fields(): void
     {
-        $this->get(route('projects.create'))
+        $this->actingAs(User::factory()->create())
+            ->get(route('projects.create'))
             ->assertOk()
             ->assertSee('Project name')
             ->assertSee('Location')
@@ -67,7 +71,8 @@ class ProjectCrudTest extends TestCase
             'description' => 'A student-run radio station.',
         ]);
 
-        $this->get(route('projects.show', $project))
+        $this->actingAs(User::factory()->create())
+            ->get(route('projects.show', $project))
             ->assertOk()
             ->assertSee('A student-run radio station.')
             ->assertSee(route('projects.edit', $project))
@@ -87,11 +92,12 @@ class ProjectCrudTest extends TestCase
             'description' => 'Old description.',
         ]);
 
-        $this->put(route('projects.update', $project), [
-            'name' => 'New name',
-            'location' => 'New location',
-            'description' => 'Updated description.',
-        ])
+        $this->actingAs(User::factory()->create())
+            ->put(route('projects.update', $project), [
+                'name' => 'New name',
+                'location' => 'New location',
+                'description' => 'Updated description.',
+            ])
             ->assertRedirect(route('projects.show', $project))
             ->assertSessionHas('success', 'Project updated successfully.');
 
@@ -111,7 +117,8 @@ class ProjectCrudTest extends TestCase
             'description' => 'Keep these details unchanged.',
         ]);
 
-        $this->from(route('projects.edit', $project))
+        $this->actingAs(User::factory()->create())
+            ->from(route('projects.edit', $project))
             ->put(route('projects.update', $project), [])
             ->assertRedirect(route('projects.edit', $project))
             ->assertSessionHasErrors(['name', 'location', 'description']);
@@ -132,10 +139,36 @@ class ProjectCrudTest extends TestCase
             'description' => 'This project will be removed.',
         ]);
 
-        $this->delete(route('projects.destroy', $project))
+        $this->actingAs(User::factory()->create())
+            ->delete(route('projects.destroy', $project))
             ->assertRedirect(route('projects.index'))
             ->assertSessionHas('success', 'Project deleted successfully.');
 
         $this->assertDatabaseMissing('projects', ['id' => $project->id]);
+    }
+
+    public function test_project_write_actions_require_authentication(): void
+    {
+        $project = Project::create([
+            'name' => 'Public project',
+            'location' => 'Main campus',
+            'description' => 'Visible to visitors.',
+        ]);
+
+        $this->get(route('projects.index'))
+            ->assertOk()
+            ->assertDontSee(route('projects.create'));
+        $this->get(route('projects.show', $project))
+            ->assertOk()
+            ->assertDontSee(route('projects.edit', $project))
+            ->assertDontSee('Delete project');
+
+        $this->get(route('projects.create'))->assertRedirect(route('login'));
+        $this->get(route('projects.edit', $project))->assertRedirect(route('login'));
+        $this->post(route('projects.store'), [])->assertRedirect(route('login'));
+        $this->put(route('projects.update', $project), [])->assertRedirect(route('login'));
+        $this->delete(route('projects.destroy', $project))->assertRedirect(route('login'));
+
+        $this->assertDatabaseHas('projects', ['id' => $project->id]);
     }
 }

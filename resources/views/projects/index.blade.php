@@ -11,7 +11,9 @@
                     <p class="eyebrow">CampusConnect</p>
                     <h2 id="projects-title">Projects</h2>
                 </div>
-                <a class="button button-primary" href="{{ route('projects.create') }}">Create a project <span aria-hidden="true">&rarr;</span></a>
+                @auth
+                    <a class="button button-primary" href="{{ route('projects.create') }}">Create a project <span aria-hidden="true">&rarr;</span></a>
+                @endauth
             </div>
 
             <div class="row g-4">

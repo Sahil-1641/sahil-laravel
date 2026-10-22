@@ -915,6 +915,118 @@ p {
     }
 }
 
+.nav-links > form {
+    margin: 0;
+}
+
+.nav-submit-button {
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.app-page {
+    min-height: 62vh;
+    padding: 48px 0 76px;
+    background: var(--soft);
+}
+
+.page-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.app-page .eyebrow {
+    margin-bottom: 8px;
+}
+
+.app-card {
+    border-color: var(--line);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(22, 57, 91, 0.05);
+}
+
+.app-page .btn-primary {
+    background-color: var(--blue);
+    border-color: var(--blue);
+}
+
+.app-page .btn-primary:hover {
+    background-color: var(--blue-dark);
+    border-color: var(--blue-dark);
+}
+
+.app-page .table > thead th {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.app-page .table > :not(caption) > * > * {
+    padding: 14px 16px;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.status-present {
+    color: #176345;
+    background: #e5f4ec;
+}
+
+.status-absent {
+    color: #9b3030;
+    background: #fae9e9;
+}
+
+.status-late {
+    color: #80530c;
+    background: #fff3d9;
+}
+
+.status-excused {
+    color: #365e87;
+    background: #e8f1fa;
+}
+
+.metric-value {
+    margin-top: 4px;
+    color: var(--ink);
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+@media (max-width: 640px) {
+    .app-page {
+        padding: 32px 0 56px;
+    }
+
+    .page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .page-heading > .btn,
+    .page-heading > .d-flex {
+        width: 100%;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

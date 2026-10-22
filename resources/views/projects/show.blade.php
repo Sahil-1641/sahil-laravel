@@ -20,12 +20,14 @@
                         <h3>About this project</h3>
                         <p>{{ $project->description }}</p>
                         <div class="d-flex flex-wrap align-items-center gap-3 mt-auto">
-                            <a class="button button-primary" href="{{ route('projects.edit', $project) }}">Edit project</a>
-                            <form action="{{ route('projects.destroy', $project) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this project?')">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-outline-danger" type="submit">Delete project</button>
-                            </form>
+                            @auth
+                                <a class="button button-primary" href="{{ route('projects.edit', $project) }}">Edit project</a>
+                                <form action="{{ route('projects.destroy', $project) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this project?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-outline-danger" type="submit">Delete project</button>
+                                </form>
+                            @endauth
                             <a class="text-link" href="{{ route('projects.index') }}">Back to projects</a>
                         </div>
                     </article>

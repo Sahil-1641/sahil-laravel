@@ -2,7 +2,12 @@
 
 namespace App\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +24,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Paginator::useBootstrapFive();
+
+        RateLimiter::for('login', static function (Request $request): Limit {
+            $email = $request->input('email');
+            $emailKey = is_string($email) ? Str::lower($email) : '';
+
+            return Limit::perMinute(5)->by(Str::transliterate($emailKey.'|'.$request->ip()));
+        });
     }
 }

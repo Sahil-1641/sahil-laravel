@@ -28,11 +28,18 @@
                     <div class="nav-panel">
                         <div class="nav-links">
                             <a href="{{ route('home') }}" @if (request()->routeIs('home')) aria-current="page" @endif>Home</a>
-                            <a href="{{ route('about') }}" @if (request()->routeIs('about')) aria-current="page" @endif>About</a>
-                            <a href="{{ route('services') }}" @if (request()->routeIs('services')) aria-current="page" @endif>Services</a>
+                            <a href="{{ route('students.index') }}" @if (request()->routeIs('students.*')) aria-current="page" @endif>Students</a>
+                            <a href="{{ route('attendances.index') }}" @if (request()->routeIs('attendances.*')) aria-current="page" @endif>Attendance</a>
+                            <a href="{{ route('reports.index') }}" @if (request()->routeIs('reports.*')) aria-current="page" @endif>Reports</a>
                             <a href="{{ route('projects.index') }}" @if (request()->routeIs('projects.*')) aria-current="page" @endif>Projects</a>
-                            <a href="{{ route('contact') }}" @if (request()->routeIs('contact')) aria-current="page" @endif>Contact</a>
-                            <a class="nav-cta" href="{{ route('contact') }}">Get connected <span aria-hidden="true">&rarr;</span></a>
+                            @guest
+                                <a class="nav-cta" href="{{ route('login') }}">Sign in <span aria-hidden="true">&rarr;</span></a>
+                            @else
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button class="nav-cta nav-submit-button" type="submit">Sign out</button>
+                                </form>
+                            @endguest
                         </div>
                     </div>
                 </details>
